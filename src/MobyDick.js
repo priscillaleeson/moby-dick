@@ -1,7 +1,12 @@
 export const Excerpt = () => {
+  const handleClick = (e) => {
+    //window.getSelection().toString().trim() is grabbing the word either on highlight or double-click as of now
+    const clickedWord = window.getSelection().toString().trim();
+    console.log(`I clicked on ${clickedWord}`);
+  };
   return (
     <div className="font-lora leading-relaxed">
-      <p className=" mb-7">
+      <p onClick={handleClick} className=" mb-7">
         <span className="text-xl font-bold">C</span>all me Ishmael. Some years
         ago--never mind how long precisely--having little or no money in my
         purse, and nothing particular to interest me on shore, I thought I would
