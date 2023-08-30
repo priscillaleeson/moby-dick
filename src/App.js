@@ -1,4 +1,4 @@
-import { Excerpt } from "./MobyDick";
+import { ExcerptContainer } from "./ExcerptContainer";
 
 function App() {
   return (
@@ -6,7 +6,7 @@ function App() {
       <div className="flex justify-center">
         <h1 className="m-2 text-lg font-lora">Moby Dick by Herman Melville</h1>
       </div>
-      <Excerpt />
+      <ExcerptContainer />
     </div>
   );
 }
