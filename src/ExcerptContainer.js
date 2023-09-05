@@ -1,25 +1,22 @@
 import getApiObject from "./webster-dictionary-api";
 import { excerptParagraphs } from "./mobyDickText";
 import { useState } from "react";
+import { DefinitionPopUpMenu } from "./DefinitionPopUpMenu";
 
 export const ExcerptContainer = () => {
+  /*state to track which span is selected */
   const [selectedWord, setSelectedWord] = useState({
     word: "",
-    usage: "",
-    definitions: [],
-    coordinates: { x: null, y: null },
+    usage: [],
+    definitions: null,
+    position: { top: 0, left: 0 },
   });
 
-  //const handleDoubleClick = () => {
-  //window.getSelection().toString().trim() is grabbing the word either on highlight or double-click as of now
+  console.log("selected word object:", selectedWord);
 
-  //   const text = window.getSelection().toString().trim();
-  //   getApiObject(text);
-  // };
-
-  console.log("selected word", selectedWord);
   return (
     <div className="font-lora leading-relaxed">
+      {/*content mapped from mobyDickText with each word wrapped in a span}*/}
       {excerptParagraphs.map((paragraph, pIndex) => {
         return (
           <p className="mb-7" key={pIndex}>
@@ -37,66 +34,41 @@ export const ExcerptContainer = () => {
       <div>
         {" "}
         {/*if the array has a response, then show definition menu*/}
-        {selectedWord.definitions.length > 0 && (
-          <DefinitionPopUpMenu content={selectedWord} />
+        {selectedWord.definitions && (
+          <DefinitionPopUpMenu selectedWord={selectedWord} />
         )}
       </div>
     </div>
   );
 };
 
-const DefinitionPopUpMenu = ({ content }) => {
-  console.log("content", content);
-  return (
-    <div className="overflow-hidden p-10 absolute rounded-sm z-10 w-80 h-80 top-10 right-10 text-black bg-indigo-200">
-      <div>
-        <div className="font-bold lowercase">{content.word}</div>
-        <div className="italic mb-2">{content.usage}</div>
-        <div>
-          <ul className="list-decimal">
-            {/*map over first definition's array */}
-            {content.definitions.map((definition) => {
-              return <li className="m-2">{definition}</li>;
-            })}
-          </ul>
-        </div>
-      </div>
-      {/* <div>
-        Tooltip for:
-        {content?.map((tier1Item) => {
-          return (
-            <ol key={Math.random()}>
-              {tier1Item?.map((tier2Item) => {
-                return <li key={Math.random()}>{tier2Item}</li>;
-              })}{" "}
-              // this is also an arrays 
-            </ol>
-          );
-        })}{" "}
-      </div> */}
-    </div>
-  );
-};
-
+//span represents each word:
 function Span({ word, setSelectedWord }) {
-  //const [definitions, setDefinitions] = useState();
+  const error = "Definition could not be found.";
 
   const handleDoubleClick = async (e) => {
     const word = e.target.innerText;
 
-    console.log(`Word: "${word}"`);
-    console.log(e.clientX, e.clientY);
+    // console.log(`Word: "${word}"`);
+    // console.log(e.clientX, e.clientY);
 
     const definitionResponse = await getApiObject(word);
-    // definitions is an array of arrays of strings aka TS: Array<string[]>
-    console.log("def response", definitionResponse);
+    // console.log("def response", definitionResponse);
 
-    setSelectedWord({
+    setSelectedWord((prevState) => ({
+      ...prevState,
       word: word,
       usage: definitionResponse[0].fl,
-      definitions: definitionResponse[0].shortdef,
-      coordinates: { x: e.clientX, y: e.clientY },
-    });
+      definitions:
+        definitionResponse[0].shortdef &&
+        definitionResponse[0].shortdef.length > 0
+          ? definitionResponse[0].shortdef
+          : [error],
+      position: {
+        top: e.clientY + window.scrollY,
+        left: e.clientX + window.scrollX,
+      },
+    }));
   };
 
   return (
