@@ -5,12 +5,15 @@ import { DefinitionPopUpMenu } from "./DefinitionPopUpMenu";
 
 export const ExcerptContainer = () => {
   /*state to track which span is selected */
-  const [selectedWord, setSelectedWord] = useState({
+
+  const initialState = {
     word: "",
     usage: [],
     definitions: null,
     position: { top: 0, left: 0 },
-  });
+  };
+
+  const [selectedWord, setSelectedWord] = useState(initialState);
 
   console.log("selected word object:", selectedWord);
 
@@ -20,7 +23,8 @@ export const ExcerptContainer = () => {
       {excerptParagraphs.map((paragraph, pIndex) => {
         return (
           <p className="mb-7" key={pIndex}>
-            {paragraph.split(" ").map((word, wIndex) => (
+            {/*removed '--' from the text due to putting words together that don't make a word*/}
+            {paragraph.split(/ |--/).map((word, wIndex) => (
               <Span
                 key={wIndex}
                 wIndex={wIndex}
@@ -35,7 +39,11 @@ export const ExcerptContainer = () => {
         {" "}
         {/*if the array has a response, then show definition menu*/}
         {selectedWord.definitions && (
-          <DefinitionPopUpMenu selectedWord={selectedWord} />
+          <DefinitionPopUpMenu
+            selectedWord={selectedWord}
+            setSelectedWord={setSelectedWord}
+            initialState={initialState}
+          />
         )}
       </div>
     </div>
@@ -44,7 +52,11 @@ export const ExcerptContainer = () => {
 
 //span represents each word:
 function Span({ word, setSelectedWord }) {
-  const error = "Definition could not be found.";
+  const error = (
+    <div className="text-red-800 italic text-sm">
+      Definition could not be found.
+    </div>
+  );
 
   const handleDoubleClick = async (e) => {
     const word = e.target.innerText;
@@ -57,13 +69,15 @@ function Span({ word, setSelectedWord }) {
 
     setSelectedWord((prevState) => ({
       ...prevState,
-      word: word,
+      //.replace(/[^a-zA-Z0-9-]/g, "") means to store the word selected in state without special characters (except dash)
+      word: word.replace(/[^a-zA-Z0-9-]/g, ""),
       usage: definitionResponse[0].fl,
       definitions:
         definitionResponse[0].shortdef &&
         definitionResponse[0].shortdef.length > 0
           ? definitionResponse[0].shortdef
           : [error],
+
       position: {
         top: e.clientY + window.scrollY,
         left: e.clientX + window.scrollX,
