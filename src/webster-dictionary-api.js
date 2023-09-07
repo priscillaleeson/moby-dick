@@ -3,9 +3,13 @@ import axios from "axios";
 const getApiObject = async (word) => {
   console.log("word: ", word);
 
+  /* sanitize selected word to remove all special characters from the API fetch */
+  const sanitizedWord = word.replace(/[^a-zA-Z0-9]/g, "");
+  console.log("sanitizedWord", sanitizedWord);
+
   // try {
   const response = await axios.get(
-    `https://www.dictionaryapi.com/api/v3/references/collegiate/json/${word}?key=9e06ee89-3af3-4280-b0ab-a6f4f6b862d0`
+    `https://www.dictionaryapi.com/api/v3/references/collegiate/json/${sanitizedWord}?key=9e06ee89-3af3-4280-b0ab-a6f4f6b862d0`
   );
 
   console.log("Response", {
