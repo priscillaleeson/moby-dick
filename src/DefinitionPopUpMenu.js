@@ -1,3 +1,5 @@
+import { HiMiniXMark } from "react-icons/hi2";
+
 export function DefinitionPopUpMenu({
   setSelectedWord,
   selectedWord,
@@ -22,7 +24,7 @@ export function DefinitionPopUpMenu({
           onClick={handleDelete}
           className="absolute top-1 right-2 text-white font-sans text-lg cursor-pointer hover:text-violet-600 active:font-semibold"
         >
-          x
+          <HiMiniXMark />
         </div>
         <div className="font-bold lowercase">{selectedWord.word}</div>
         <div className="italic mb-2">{selectedWord.usage}</div>
