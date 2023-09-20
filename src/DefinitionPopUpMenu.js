@@ -22,7 +22,7 @@ export function DefinitionPopUpMenu({
       <div>
         <div
           onClick={handleDelete}
-          className="absolute top-1 right-2 text-white font-sans text-lg cursor-pointer hover:text-violet-600 active:font-semibold"
+          className="absolute top-2 right-2 text-white font-sans text-lg cursor-pointer hover:text-violet-600 active:font-semibold"
         >
           <HiMiniXMark />
         </div>
